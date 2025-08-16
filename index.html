@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Кристина ну вот так вот</title>
+  <style>
+    /* === Настройки — меняй под себя === */
+    :root {
+      /* URL фоновой картинки (замени на свой любимый фон) */
+      --bg-url: url('https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=1600&auto=format&fit=crop');
+      /* URL стикера PNG/WebP с прозрачным фоном (замени на свой) */
+      --sticker-url: url('https://upload.wikimedia.org/wikipedia/commons/3/3a/Emoji_u2764.svg');
+      /* Затемнение фона (0 — без, 1 — очень тёмно) */
+      --darken: 0.35;
+    }
+
+    /* Сброс и базовые стили */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: #fff;
+      background: #000;
+    }
+
+    /* Фон на весь экран */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05) contrast(1.05);
+      z-index: -2;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,var(--darken));
+      backdrop-filter: blur(2px);
+      z-index: -1;
+    }
+
+    /* Контейнер по центру экрана (особенно для телефона) */
+    .center {
+      min-height: 100svh; /* учитывает панельки телефона */
+      padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .card {
+      display: grid;
+      gap: 18px;
+      padding: 20px 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      max-width: 520px;
+      width: 100%;
+    }
+
+    /* Имя по центру */
+    .title {
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      /* гибкий размер под мобильный/планшет/десктоп */
+      font-size: clamp(32px, 8vw, 64px);
+      /* красивый градиент по тексту */
+      background: linear-gradient(135deg, #fff, #ffd1e8 35%, #ff8ccf 70%, #ffd1e8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 18px rgba(255, 140, 207, 0.35);
+    }
+
+    /* Стикер */
+    .sticker {
+      width: clamp(72px, 24vw, 140px);
+      aspect-ratio: 1/1;
+      margin: 0 auto;
+      background-image: var(--sticker-url);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+    }
+
+    /* Подпись/слоган (необязательно) */
+    .tag {
+      font-size: clamp(14px, 3.8vw, 18px);
+      opacity: 0.9;
+    }
+
+    /* Кнопка «изменить фон» (можно удалить, если не нужно) */
+    .actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    button {
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      backdrop-filter: blur(8px);
+    }
+    button:active { transform: translateY(1px); }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"></div>
+
+  <main class="center">
+    <section class="card" role="group" aria-label="Имя и стикер">
+      <div class="sticker" aria-hidden="true"></div>
+      <h1 class="title">Кристина</h1>
+      <p class="tag">Ну вот так вот</p>
+
+      <!-- Небольшие действия для удобства -->
+      <div class="actions">
+        <button id="bgBtn" type="button">Поменять фон</button>
+        <button id="stickerBtn" type="button">Поменять стикер</button>
+        <button id="nameBtn" type="button">Поменять имя</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Простой редактор без сохранения: можно быстро поменять фон, стикер и имя.
+    const setCssVarUrl = (name, url) => {
+      if (!url) return;
+      document.documentElement.style.setProperty(name, `url('${url}')`);
+    };
+
+    document.getElementById('bgBtn').addEventListener('click', () => {
+      const url = prompt('Вставь ссылку на фоновую картинку (jpg/png/webp):');
+      setCssVarUrl('--bg-url', url);
+    });
+
+    document.getElementById('stickerBtn').addEventListener('click', () => {
+      const url = prompt('Вставь ссылку на стикер (лучше PNG/WebP с прозрачным фоном):');
+      setCssVarUrl('--sticker-url', url);
+    });
+
+    document.getElementById('nameBtn').addEventListener('click', () => {
+      const name = prompt('Введи имя (например: Кристина):');
+      if (name && name.trim()) {
+        document.querySelector('.title').textContent = name.trim();
+      }
+    });
+  </script>
+</body>
+</html>
